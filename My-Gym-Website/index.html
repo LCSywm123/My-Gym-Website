@@ -1,102 +1,4863 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>My Gym Plan</title>
 
     <style>
-        body {
-            font-family: Arial;
-            background: #111;
-            color: white;
-            text-align: center;
+        * {
+            box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 40px;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+        }
+
+        header {
+            background: #151515;
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        header p {
+            color: #888;
+            margin: 8px 0 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: #111;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-x: auto;
+        }
+
+        nav button {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #222;
+            color: #ccc;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        nav button.active {
+            background: #e50914;
+            color: white;
+        }
+
+        .page {
+            display: none;
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 20px 100px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .page-title p {
+            color: #888;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: #1d1d1d;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #2d2d2d;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            margin-top: 6px;
+            color: #888;
+            font-size: 13px;
         }
 
         .workout {
-            background: #222;
-            margin: 20px;
+            background: #1b1b1b;
+            margin-bottom: 20px;
             padding: 20px;
             border-radius: 15px;
-        }
-        
-        .workout img {
-            width: 300px;
-            max-width: 100%;
-            border-radius: 15px;
-            margin: 15px 0;
+            border: 1px solid #2c2c2c;
         }
 
-        button {
-            padding: 12px 20px;
-            font-size: 16px;
+        .exercise-header {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .exercise-image {
+            width: 110px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #333;
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-info h3 {
+            margin: 0 0 6px;
+        }
+
+        .exercise-info p {
+            margin: 0;
+            color: #888;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #e50914;
+        }
+
+        .progress-text {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .set-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 1fr 90px;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .set-number {
+            color: #888;
+        }
+
+        .set-row input {
+            padding: 10px;
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            width: 100%;
+        }
+
+        .set-row input:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .complete-set {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
             cursor: pointer;
         }
+
+        .complete-set:hover {
+            background: #e50914;
+        }
+
+        .complete-set.completed {
+            background: #2e7d32;
+        }
+
+        .exercise-summary {
+            color: #888;
+            margin-top: 15px;
+        }
+
+        .history-box,
+        .chart-box,
+        .backup {
+            background: #1b1b1b;
+            border: 1px solid #2c2c2c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+        }
+
+        .history-item {
+            background: #222;
+            padding: 13px;
+            border-radius: 9px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-detail {
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .delete-history {
+            background: #333;
+            color: #aaa;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .delete-history:hover {
+            background: #e50914;
+            color: white;
+        }
+
+        .backup button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .backup button:hover {
+            background: #444;
+        }
+
+        .backup .clear-button:hover {
+            background: #b00020;
+        }
+
+        /* =========================
+           动作进步
+        ========================= */
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .progress-pr {
+            background: #222;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .progress-pr-title {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .progress-pr-value {
+            font-size: 20px;
+            margin-top: 7px;
+        }
+
+        .progress-chart-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+            background: #151515;
+            border-radius: 12px;
+        }
+
+        #progressChart {
+            width: 100%;
+            min-width: 650px;
+            height: 350px;
+            display: none;
+        }
+
+        .progress-empty {
+            text-align: center;
+            color: #888;
+            padding: 35px 10px;
+        }
+
+        .progress-history-title {
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        /* =========================
+           PR 推荐功能
+        ========================= */
+
+        .recommendation-box {
+            margin-top: 20px;
+            background: #171717;
+            border: 1px solid #333;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .recommendation-title {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .recommendation-card {
+            background: #222;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .recommendation-card .value {
+            font-size: 21px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        .recommendation-card .label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .recommendation-message {
+            margin-top: 15px;
+            background: #222;
+            border-radius: 10px;
+            padding: 14px;
+            line-height: 1.6;
+        }
+
+        .recommendation-target {
+            margin-top: 10px;
+            color: #aaa;
+        }
+
+        .recommendation-good {
+            border-left: 4px solid #4caf50;
+        }
+
+        .recommendation-normal {
+            border-left: 4px solid #ff9800;
+        }
+
+        .recommendation-hold {
+            border-left: 4px solid #2196f3;
+        }
+
+        /* =========================
+           下一组推荐
+        ========================= */
+
+        .next-set-box {
+            margin-top: 15px;
+            background: #171717;
+            border: 1px solid #333;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .next-set-title {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .next-set-main {
+            background: #222;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .next-set-last {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .next-set-weight {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .next-set-reps {
+            font-size: 17px;
+            color: #aaa;
+        }
+
+        .next-set-message {
+            margin-top: 12px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .next-set-status {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            background: #333;
+            font-size: 14px;
+        }
+
+        .next-set-increase {
+            border-left: 4px solid #4caf50;
+        }
+
+        .next-set-hold {
+            border-left: 4px solid #2196f3;
+        }
+
+        /* =========================
+           TIMER
+        ========================= */
+
+        .timer {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 280px;
+            background: #181818;
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 15px;
+            z-index: 200;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            user-select: none;
+            touch-action: none;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            margin-bottom: 5px;
+        }
+
+        .timer-controls button {
+            border: none;
+            background: #333;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 42px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .timer-buttons {
+            display: flex;
+            gap: 7px;
+        }
+
+        .timer-buttons button {
+            flex: 1;
+            border: none;
+            background: #333;
+            color: white;
+            padding: 9px 5px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .timer-buttons button:hover {
+            background: #e50914;
+        }
+
+        .timer.minimized {
+            width: 155px;
+            padding: 9px 11px;
+        }
+
+        .timer.minimized .timer-display {
+            font-size: 26px;
+            margin: 4px 0;
+        }
+
+        .timer.minimized .timer-buttons {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%) translateY(100px);
+            background: #222;
+            color: white;
+            padding: 13px 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            z-index: 500;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media(max-width:700px) {
+
+            header h1 {
+                font-size: 27px;
+            }
+
+            .page {
+                padding: 20px 12px 100px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .progress-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .recommendation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .exercise-header {
+                align-items: flex-start;
+            }
+
+            .exercise-image {
+                width: 85px;
+                height: 65px;
+            }
+
+            .set-row {
+                grid-template-columns: 40px 1fr 1fr;
+            }
+
+            .complete-set {
+                grid-column: 2 / 4;
+            }
+
+            .timer {
+                right: 10px;
+                bottom: 10px;
+            }
+        }
+
     </style>
 </head>
 
+
 <body>
 
-    <h1>🏋️ My Gym Plan</h1>
 
-    <p>My Personal Workout Website</p>
+<header>
 
-    <div class="workout">
-        <h2>🔴 PUSH DAY推日</h2>
+    <h1>🏋️ 我的健身计划</h1>
 
-        <p>Bench Press平板卧推 — 4 × 6-10</p>
-        <img src="images/bench.jpg" alt="Bench Press">
-        <p>Incline Dumbbell Press上斜哑铃卧推 — 3 × 8-12</p>
-        <img src="images/inclinedumbbellpress.jpg" alt="Incline Dumbbell Press">
-        <p>chest Fly夹胸 — 3 × 10-15</p>
-        <img src="images/chestflys.jpg" alt="Chest Flys">
-        <p>Cable Lateral Raise绳索侧平举 — 4 × 12-20</p>
-        <img src="images/cablelateralraise.jpg" alt="Cable Lateral Raise">
-        <p>cable Single Arm Triceps Push Down单臂绳索三头下压 — 3 × 10-15</p>
-        <img src="images/cablesinglearmtricepspushdown.jpg" alt="Cable Single Arm Triceps Push Down">
-        <p>Cable Over Head Triceps Extension绳索过头臂屈伸 — 3 × 10-15</p>
-        <img src="images/cableoverheadtricepextension.jpg" alt="Cable Over Head Tricep Extension">
+    <p>
+        我的个人 PPL 训练记录
+    </p>
 
-        <button>Start Push Workout</button>
+</header>
+
+
+<nav>
+
+    <button class="nav-button active"
+        onclick="showPage('home', this)">
+        🏠 首页
+    </button>
+
+    <button class="nav-button"
+        onclick="showPage('push', this)">
+        🔴 PUSH
+    </button>
+
+    <button class="nav-button"
+        onclick="showPage('pull', this)">
+        🔵 PULL
+    </button>
+
+    <button class="nav-button"
+        onclick="showPage('legs', this)">
+        🟢 LEGS
+    </button>
+
+    <button class="nav-button"
+        onclick="showPage('history', this)">
+        📊 训练记录
+    </button>
+
+</nav>
+
+
+<!-- =========================
+     HOME
+========================= -->
+
+<section id="home" class="page active">
+
+    <div class="page-title">
+        <h2>🏠 首页</h2>
+        <p>查看你的训练进度</p>
     </div>
 
-    <div class="workout">
-        <h2>🔵 PULL DAY拉日</h2>
-
-        <p>Lat Pulldown高位下拉 — 4 × 8-12</p>
-        <img src="images/latpulldown.jpg" alt="Lat Pull Down">
-        <p>Seated Cable Row坐姿繩索划船 — 3 × 8-12</p>
-        <img src="images/seatedcablerow.jpg" alt="Seated Cable Row">
-        <p>Single-Arm Chest-Supported Row單手靠胸划船  side — 3 × 8-12/side</p>
-        <img src="images/onearmseatedmachinerow.jpg" alt="Single-Arm Chest-Supported Row">
-        <p>Face Pull繩索面拉 — 3 × 8-12</p>
-        <img src="images/facepull.jpg" alt="Face Pull">
-        <p>EZ-Bar Preacher Curl牧師凳彎舉 — 3 × 8-12</p>
-        <img src="images/ezbarbellpreachercurl.jpg" alt="EZ-Bar Preacher Curl">
-        <p>Rope Hammer Curl繩索錘式彎舉 — 3 × 10-15</p>
-        <img src="images/ropehammercurl.jpg" alt="Rope Hammer Curl">
-
-        <button>Start Pull Workout</button>
+    <div
+        class="stats-grid"
+        id="dashboardStats">
     </div>
 
-    <div class="workout">
-        <h2>🟢 LEG DAY腿日</h2>
-
-        <p>Barbell Squat杠铃深蹲 — 4 × 6-10</p>
-        <img src="images/barbellsquart.jpg" alt="Barbell Squart">
-        <p>Leg Press 腿舉 — 3 × 8-12</p>
-        <img src="images/legpress.jpg" alt="Leg Press">
-        <p>Leg Curl仰臥腿彎舉 — 3 × 10-15</p>
-        <img src="images/legcurl.jpg" alt="Leg Curl">
-        <p>Leg Extension器械腿屈伸 — 3 × 10-15</p>
-        <img src="images/legextension.jpg" alt="Leg Extension">
-        <p>Calf Raise小腿提踵  — 4 × 12-20</p>
-        <img src="images/calfraise.jpg" alt="Calf Raise">
-        
-        <button>Start Leg Workout</button>
+    <div
+        class="history-box"
+        id="recentWorkouts">
     </div>
+
+    <div class="backup">
+
+        <h3>💾 数据备份</h3>
+
+        <p style="color:#888;">
+            保存你的训练数据，方便以后恢复。
+        </p>
+
+        <button onclick="exportData()">
+            📥 导出数据
+        </button>
+
+        <button
+            onclick="
+                document
+                .getElementById('importFile')
+                .click()
+            "
+        >
+            📤 导入数据
+        </button>
+
+        <input
+            type="file"
+            id="importFile"
+            accept=".json"
+            style="display:none"
+            onchange="importData(event)"
+        >
+
+        <button
+            class="clear-button"
+            onclick="clearTodayWorkout()"
+        >
+            🗑️ 清除今日训练
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PUSH
+========================= -->
+
+<section id="push" class="page">
+
+    <div class="page-title">
+
+        <h2>🔴 PUSH DAY</h2>
+
+        <p>
+            胸部 · 肩膀 · 三头肌
+        </p>
+
+    </div>
+
+    <div id="pushWorkout"></div>
+
+</section>
+
+
+<!-- =========================
+     PULL
+========================= -->
+
+<section id="pull" class="page">
+
+    <div class="page-title">
+
+        <h2>🔵 PULL DAY</h2>
+
+        <p>
+            背部 · 后束三角肌 · 二头肌
+        </p>
+
+    </div>
+
+    <div id="pullWorkout"></div>
+
+</section>
+
+
+<!-- =========================
+     LEGS
+========================= -->
+
+<section id="legs" class="page">
+
+    <div class="page-title">
+
+        <h2>🟢 LEG DAY</h2>
+
+        <p>
+            股四头肌 · 腘绳肌 · 小腿
+        </p>
+
+    </div>
+
+    <div id="legsWorkout"></div>
+
+</section>
+
+
+<!-- =========================
+     HISTORY
+========================= -->
+
+<section id="history" class="page">
+
+    <div class="page-title">
+
+        <h2>📊 训练记录</h2>
+
+        <p>
+            查看你的训练数据和动作进步
+        </p>
+
+    </div>
+
+
+    <div
+        class="stats-grid"
+        id="historyStats">
+    </div>
+
+
+    <!-- =========================
+         动作进步
+    ========================= -->
+
+    <div class="chart-box">
+
+        <h3>
+            📈 动作进步
+        </h3>
+
+        <p style="color:#888;">
+            选择一个动作，查看你的重量、次数和训练量变化。
+        </p>
+
+
+        <select
+            id="exerciseSelect"
+            onchange="renderChart()"
+        >
+
+            <option value="">
+                选择一个动作
+            </option>
+
+        </select>
+
+
+        <div
+            id="progressEmpty"
+            class="progress-empty"
+        >
+            👇 请选择一个动作
+        </div>
+
+
+        <div
+            id="progressContent"
+            style="display:none;"
+        >
+
+            <div class="progress-stats">
+
+                <div class="stat">
+
+                    <div
+                        class="stat-number"
+                        id="progressBestWeight"
+                    >
+                        0 kg
+                    </div>
+
+                    <div class="stat-label">
+                        最佳重量
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div
+                        class="stat-number"
+                        id="progressBestReps"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        最高次数
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div
+                        class="stat-number"
+                        id="progressSessions"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        训练次数
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div
+                        class="stat-number"
+                        id="progressVolume"
+                    >
+                        0 kg
+                    </div>
+
+                    <div class="stat-label">
+                        总训练量
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="progress-pr"
+                id="progressPR"
+            ></div>
+
+
+            <!-- =========================
+                 PR 推荐
+            ========================= -->
+
+            <div
+                class="recommendation-box"
+                id="prRecommendation"
+            ></div>
+
+
+            <!-- =========================
+                 下一组推荐
+            ========================= -->
+
+            <div
+                id="nextSetRecommendation"
+            ></div>
+
+
+            <div class="progress-chart-wrapper">
+
+                <canvas
+                    id="progressChart"
+                    width="900"
+                    height="350"
+                ></canvas>
+
+            </div>
+
+
+            <h3 class="progress-history-title">
+                📋 训练历史
+            </h3>
+
+            <div
+                id="progressHistory">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="history-box">
+
+        <h3>
+            📅 每日训练记录
+        </h3>
+
+        <div id="historyList"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     TIMER
+========================= -->
+
+<div
+    class="timer"
+    id="timerBox"
+>
+
+    <div
+        class="timer-header"
+        id="timerHeader"
+    >
+
+        <div>
+            ⏱️ 组间休息
+        </div>
+
+        <div class="timer-controls">
+
+            <button
+                type="button"
+                onclick="toggleTimerSize(event)"
+                id="timerSizeButton"
+            >
+                −
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="timer-display"
+        id="timerDisplay"
+    >
+        01:30
+    </div>
+
+
+    <div class="timer-buttons">
+
+        <button onclick="setTimer(60)">
+            60秒
+        </button>
+
+        <button onclick="setTimer(90)">
+            90秒
+        </button>
+
+        <button onclick="setTimer(120)">
+            120秒
+        </button>
+
+    </div>
+
+    <br>
+
+    <div class="timer-buttons">
+
+        <button onclick="startTimer()">
+            ▶ 开始
+        </button>
+
+        <button onclick="pauseTimer()">
+            ⏸ 暂停
+        </button>
+
+        <button onclick="resetTimer()">
+            🔄 重置
+        </button>
+
+    </div>
+
+</div>
+
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script>
+
+
+/* =========================
+   WORKOUTS
+========================= */
+
+const workouts = [
+
+{
+    id: "push",
+
+    title: "🔴 PUSH DAY",
+
+    exercises: [
+
+        {
+            name: "平板卧推 Bench Press",
+            info: "4 × 6-10",
+            image: "images/bench.jpg",
+            sets: 4,
+            rest: 180
+        },
+
+        {
+            name: "上斜哑铃卧推 Incline Dumbbell Press",
+            info: "3 × 8-12",
+            image: "images/inclinedumbbellpress.jpg",
+            sets: 3,
+            rest: 120
+        },
+
+        {
+            name: "夹胸 Chest Fly",
+            info: "3 × 10-15",
+            image: "images/chestflys.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "绳索侧平举 Cable Lateral Raise",
+            info: "4 × 12-20",
+            image: "images/cablelateralraise.jpg",
+            sets: 4,
+            rest: 60
+        },
+
+        {
+            name: "单臂绳索三头下压 Cable Single Arm Triceps Pushdown",
+            info: "3 × 10-15",
+            image: "images/cablesinglearmtricepspushdown.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "绳索过头三头伸展 Cable Overhead Triceps Extension",
+            info: "3 × 10-15",
+            image: "images/cableoverheadtricepextension.jpg",
+            sets: 3,
+            rest: 90
+        }
+
+    ]
+},
+
+{
+    id: "pull",
+
+    title: "🔵 PULL DAY",
+
+    exercises: [
+
+        {
+            name: "高位下拉 Lat Pulldown",
+            info: "4 × 6-10",
+            image: "images/latpulldown.jpg",
+            sets: 4,
+            rest: 120
+        },
+
+        {
+            name: "坐姿绳索划船 Seated Cable Row",
+            info: "3 × 8-12",
+            image: "images/seatedcablerow.jpg",
+            sets: 3,
+            rest: 120
+        },
+
+        {
+            name: "单手靠胸划船 Single-Arm Chest-Supported Row",
+            info: "3 × 8-12",
+            image: "images/onearmseatedmachinerow.jpg",
+            sets: 3,
+            rest: 120
+        },
+
+        {
+            name: "绳索面拉 Face Pull",
+            info: "3 × 12-20",
+            image: "images/facepull.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "牧师凳弯举 EZ-Bar Preacher Curl",
+            info: "3 × 8-12",
+            image: "images/ezbarbellpreachercurl.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "绳索锤式弯举 Rope Hammer Curl",
+            info: "3 × 10-15",
+            image: "images/ropehammercurl.jpg",
+            sets: 3,
+            rest: 90
+        }
+
+    ]
+},
+
+{
+    id: "legs",
+
+    title: "🟢 LEG DAY",
+
+    exercises: [
+
+        {
+            name: "杠铃深蹲 Barbell Squat",
+            info: "4 × 6-10",
+            image: "images/barbellsquart.jpg",
+            sets: 4,
+            rest: 180
+        },
+
+        {
+            name: "腿举 Leg Press",
+            info: "3 × 8-12",
+            image: "images/legpress.jpg",
+            sets: 3,
+            rest: 150
+        },
+
+        {
+            name: "仰卧腿弯举 Leg Curl",
+            info: "3 × 10-15",
+            image: "images/legcurl.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "器械腿屈伸 Leg Extension",
+            info: "3 × 10-15",
+            image: "images/legextension.jpg",
+            sets: 3,
+            rest: 90
+        },
+
+        {
+            name: "小腿提踵 Calf Raise",
+            info: "4 × 12-20",
+            image: "images/calfraise.jpg",
+            sets: 4,
+            rest: 90
+        }
+
+    ]
+}
+
+];
+
+
+const STORAGE_KEY =
+    "myGymWorkoutData";
+
+
+/* =========================
+   STORAGE
+========================= */
+
+function getWorkoutData() {
+
+    return JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+}
+
+
+function saveWorkoutData(data) {
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
+}
+
+
+/* =========================
+   DATE
+========================= */
+
+function getToday() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+let toastTimer = null;
+
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(
+            () => {
+                toast.classList.remove("show");
+            },
+            2500
+        );
+
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+function showPage(
+    pageId,
+    button
+) {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            page =>
+                page.classList.remove("active")
+        );
+
+    document
+        .getElementById(pageId)
+        .classList.add("active");
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(
+            btn =>
+                btn.classList.remove("active")
+        );
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    window.scrollTo(0, 0);
+
+    renderAll();
+
+}
+
+
+/* =========================
+   EXERCISE HISTORY
+========================= */
+
+function getExerciseHistory(
+    exerciseName
+) {
+
+    const data =
+        getWorkoutData();
+
+    const history = [];
+
+
+    Object.keys(data)
+        .forEach(
+            date => {
+
+                const day =
+                    data[date];
+
+                Object.keys(day)
+                    .forEach(
+                        workoutId => {
+
+                            const workout =
+                                day[workoutId];
+
+                            if (
+                                !workout.exercises
+                            ) {
+                                return;
+                            }
+
+                            const exercise =
+                                workout.exercises[
+                                    exerciseName
+                                ];
+
+                            if (
+                                !exercise ||
+                                !exercise.sets
+                            ) {
+                                return;
+                            }
+
+                            exercise.sets.forEach(
+                                set => {
+
+                                    if (
+                                        set.completed
+                                    ) {
+
+                                        history.push({
+
+                                            date: date,
+
+                                            weight:
+                                                Number(set.weight),
+
+                                            reps:
+                                                Number(set.reps)
+
+                                        });
+
+                                    }
+
+                                }
+                            );
+
+                        }
+                    );
+
+            }
+        );
+
+
+    history.sort(
+        (a, b) =>
+            a.date.localeCompare(b.date)
+    );
+
+
+    return history;
+
+}
+
+
+/* =========================
+   PR
+========================= */
+
+function getPR(
+    exerciseName
+) {
+
+    const history =
+        getExerciseHistory(
+            exerciseName
+        );
+
+
+    if (!history.length) {
+        return null;
+    }
+
+
+    return history.reduce(
+        (best, current) => {
+
+            const currentScore =
+                current.weight *
+                current.reps;
+
+            const bestScore =
+                best.weight *
+                best.reps;
+
+            return currentScore > bestScore
+                ? current
+                : best;
+
+        }
+    );
+
+}
+
+
+/* =========================
+   PR 推荐算法
+========================= */
+
+function getPRRecommendation(
+    exerciseName
+) {
+
+    const history =
+        getExerciseHistory(
+            exerciseName
+        );
+
+
+    if (!history.length) {
+        return null;
+    }
+
+
+    /*
+     * 按日期整理
+     */
+
+    const daily = {};
+
+
+    history.forEach(
+        item => {
+
+            if (!daily[item.date]) {
+
+                daily[item.date] = [];
+
+            }
+
+            daily[item.date].push(item);
+
+        }
+    );
+
+
+    const dates =
+        Object.keys(daily)
+            .sort();
+
+
+    /*
+     * 找出每一天最佳表现
+     */
+
+    const dailyBest =
+        dates.map(
+            date => {
+
+                const sets =
+                    daily[date];
+
+
+                return sets.reduce(
+                    (best, current) => {
+
+                        const currentScore =
+                            current.weight *
+                            current.reps;
+
+                        const bestScore =
+                            best.weight *
+                            best.reps;
+
+
+                        if (
+                            current.weight >
+                            best.weight
+                        ) {
+                            return current;
+                        }
+
+
+                        if (
+                            current.weight ===
+                            best.weight &&
+                            current.reps >
+                            best.reps
+                        ) {
+                            return current;
+                        }
+
+
+                        return currentScore >
+                            bestScore
+                            ? current
+                            : best;
+
+                    }
+                );
+
+            }
+        );
+
+
+    const latest =
+        dailyBest[
+            dailyBest.length - 1
+        ];
+
+
+    /*
+     * 训练动作的目标次数
+     */
+
+    const exercise =
+        workouts
+            .flatMap(
+                workout =>
+                    workout.exercises
+            )
+            .find(
+                item =>
+                    item.name ===
+                    exerciseName
+            );
+
+
+    let minReps = 8;
+    let maxReps = 12;
+
+
+    if (exercise) {
+
+        const match =
+            exercise.info.match(
+                /(\d+)\s*×\s*(\d+)-(\d+)/
+            );
+
+
+        if (match) {
+
+            minReps =
+                Number(match[2]);
+
+            maxReps =
+                Number(match[3]);
+
+        }
+
+    }
+
+
+    /*
+     * 当前训练表现
+     */
+
+    const latestWeight =
+        latest.weight;
+
+    const latestReps =
+        latest.reps;
+
+
+    let recommendedWeight =
+        latestWeight;
+
+    let recommendedReps =
+        minReps;
+
+
+    let status =
+        "hold";
+
+
+    let message = "";
+
+
+    /*
+     * 根据重量类型决定加多少
+     */
+
+    let increment;
+
+
+    if (
+        exerciseName.includes(
+            "杠铃"
+        ) ||
+        exerciseName.includes(
+            "Bench"
+        ) ||
+        exerciseName.includes(
+            "Squat"
+        )
+    ) {
+
+        increment = 2.5;
+
+    }
+    else if (
+        exerciseName.includes(
+            "哑铃"
+        ) ||
+        exerciseName.includes(
+            "Dumbbell"
+        )
+    ) {
+
+        increment = 1;
+
+    }
+    else {
+
+        increment = 2.5;
+
+    }
+
+
+    if (
+        latestReps >= maxReps
+    ) {
+
+        recommendedWeight =
+            latestWeight +
+            increment;
+
+        recommendedReps =
+            minReps;
+
+        status =
+            "good";
+
+
+        message =
+            `你已经完成 ${latestWeight} kg × ${latestReps} 次，达到目标次数上限。下一次可以尝试增加重量。`;
+
+    }
+
+    else if (
+        latestReps >=
+        maxReps - 1
+    ) {
+
+        recommendedWeight =
+            latestWeight;
+
+        recommendedReps =
+            maxReps;
+
+        status =
+            "normal";
+
+
+        message =
+            `你已经接近次数上限。下一次先保持 ${latestWeight} kg，争取做到 ${maxReps} 次。`;
+
+    }
+
+    else {
+
+        recommendedWeight =
+            latestWeight;
+
+        recommendedReps =
+            Math.min(
+                latestReps + 1,
+                maxReps
+            );
+
+        status =
+            "hold";
+
+
+        message =
+            `目前重量还适合继续使用。下一次先保持 ${latestWeight} kg，尝试比上次多做 1 次。`;
+
+    }
+
+
+    if (
+        !latestWeight ||
+        !latestReps
+    ) {
+
+        return null;
+
+    }
+
+
+    const pr =
+        getPR(
+            exerciseName
+        );
+
+
+    return {
+
+        latestWeight,
+        latestReps,
+
+        recommendedWeight,
+
+        recommendedReps,
+
+        minReps,
+        maxReps,
+
+        increment,
+
+        status,
+
+        message,
+
+        latestDate:
+            latest.date,
+
+        prWeight:
+            pr.weight,
+
+        prReps:
+            pr.reps,
+
+        prScore:
+            pr.weight *
+            pr.reps
+
+    };
+
+}
+
+
+/* =========================
+   显示 PR 推荐
+========================= */
+
+function renderPRRecommendation(
+    exerciseName
+) {
+
+    const box =
+        document.getElementById(
+            "prRecommendation"
+        );
+
+
+    if (!exerciseName) {
+
+        box.innerHTML = "";
+
+        return;
+
+    }
+
+
+    const recommendation =
+        getPRRecommendation(
+            exerciseName
+        );
+
+
+    if (!recommendation) {
+
+        box.innerHTML = `
+
+            <div class="recommendation-title">
+                🎯 PR 推荐
+            </div>
+
+            <div class="recommendation-message">
+                还没有足够的训练数据。
+                <br>
+                完成一次训练后，这里会自动帮你计算下一次推荐重量。
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let statusClass =
+        "recommendation-hold";
+
+
+    let statusText =
+        "📌 保持重量";
+
+
+    if (
+        recommendation.status ===
+        "good"
+    ) {
+
+        statusClass =
+            "recommendation-good";
+
+        statusText =
+            "🔥 建议加重量";
+
+    }
+
+    else if (
+        recommendation.status ===
+        "normal"
+    ) {
+
+        statusClass =
+            "recommendation-normal";
+
+        statusText =
+            "💪 继续冲次数";
+
+    }
+
+
+    box.innerHTML = `
+
+        <div class="recommendation-title">
+            🎯 下一次训练推荐
+        </div>
+
+
+        <div class="
+            recommendation-message
+            ${statusClass}
+        ">
+
+            <strong>
+                ${statusText}
+            </strong>
+
+            <div style="
+                margin-top:8px;
+                color:#aaa;
+            ">
+                ${recommendation.message}
+            </div>
+
+        </div>
+
+
+        <div class="recommendation-grid">
+
+            <div class="recommendation-card">
+
+                <div class="label">
+                    上次表现
+                </div>
+
+                <div class="value">
+                    ${recommendation.latestWeight}
+                    kg ×
+                    ${recommendation.latestReps}
+                </div>
+
+            </div>
+
+
+            <div class="recommendation-card">
+
+                <div class="label">
+                    推荐重量
+                </div>
+
+                <div class="value">
+                    ${recommendation.recommendedWeight}
+                    kg
+                </div>
+
+            </div>
+
+
+            <div class="recommendation-card">
+
+                <div class="label">
+                    推荐次数
+                </div>
+
+                <div class="value">
+                    ${recommendation.recommendedReps}
+                    reps
+                </div>
+
+            </div>
+
+
+            <div class="recommendation-card">
+
+                <div class="label">
+                    当前 PR
+                </div>
+
+                <div class="value">
+                    ${recommendation.prWeight}
+                    kg ×
+                    ${recommendation.prReps}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="recommendation-target">
+
+            🎯 目标范围：
+            ${recommendation.minReps}-
+            ${recommendation.maxReps} reps
+
+            <br>
+
+            📅 上次训练：
+            ${recommendation.latestDate}
+
+            <br>
+
+            📈 PR 训练量：
+            ${recommendation.prScore.toFixed(0)}
+            kg
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   下一组推荐算法
+========================= */
+
+function getNextSetRecommendation(
+    exerciseName
+) {
+
+    const data =
+        getWorkoutData();
+
+    const today =
+        getToday();
+
+    const day =
+        data[today];
+
+    if (!day) {
+        return null;
+    }
+
+
+    let latestSet = null;
+
+
+    /*
+     * 找出今天这个动作
+     * 最后一个已经完成的组
+     */
+
+    Object.values(day)
+        .forEach(
+            workout => {
+
+                if (
+                    !workout ||
+                    !workout.exercises
+                ) {
+                    return;
+                }
+
+
+                const exercise =
+                    workout.exercises[
+                        exerciseName
+                    ];
+
+
+                if (
+                    !exercise ||
+                    !exercise.sets
+                ) {
+                    return;
+                }
+
+
+                exercise.sets.forEach(
+                    (set, index) => {
+
+                        if (
+                            set.completed
+                        ) {
+
+                            latestSet = {
+
+                                weight:
+                                    Number(set.weight),
+
+                                reps:
+                                    Number(set.reps),
+
+                                setIndex:
+                                    index
+
+                            };
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    if (!latestSet) {
+        return null;
+    }
+
+
+    /*
+     * 找到动作本身
+     */
+
+    const exercise =
+        workouts
+            .flatMap(
+                workout =>
+                    workout.exercises
+            )
+            .find(
+                item =>
+                    item.name ===
+                    exerciseName
+            );
+
+
+    if (!exercise) {
+        return null;
+    }
+
+
+    /*
+     * 读取目标次数
+     */
+
+    let minReps = 8;
+    let maxReps = 12;
+
+
+    const match =
+        exercise.info.match(
+            /(\d+)\s*×\s*(\d+)-(\d+)/
+        );
+
+
+    if (match) {
+
+        minReps =
+            Number(match[2]);
+
+        maxReps =
+            Number(match[3]);
+
+    }
+
+
+    /*
+     * 判断加重量幅度
+     */
+
+    let increment = 2.5;
+
+
+    if (
+        exerciseName.includes("哑铃") ||
+        exerciseName.includes("Dumbbell")
+    ) {
+
+        increment = 1;
+
+    }
+
+
+    if (
+        exerciseName.includes("杠铃") ||
+        exerciseName.includes("Bench") ||
+        exerciseName.includes("Squat")
+    ) {
+
+        increment = 2.5;
+
+    }
+
+
+    /*
+     * 下一组推荐
+     */
+
+    let recommendedWeight =
+        latestSet.weight;
+
+    let recommendedReps =
+        Math.min(
+            latestSet.reps + 1,
+            maxReps
+        );
+
+    let status =
+        "hold";
+
+    let message = "";
+
+
+    /*
+     * 如果上一组已经达到次数上限
+     */
+
+    if (
+        latestSet.reps >= maxReps
+    ) {
+
+        recommendedWeight =
+            latestSet.weight +
+            increment;
+
+        recommendedReps =
+            minReps;
+
+        status =
+            "increase";
+
+        message =
+            `上一组完成 ${latestSet.weight} kg × ${latestSet.reps}，已经达到 ${maxReps} 次上限。下一组可以尝试增加 ${increment} kg，并回到 ${minReps} 次左右。`;
+
+    }
+
+    /*
+     * 如果上一组只差 1 次达到上限
+     */
+
+    else if (
+        latestSet.reps >=
+        maxReps - 1
+    ) {
+
+        recommendedWeight =
+            latestSet.weight;
+
+        recommendedReps =
+            maxReps;
+
+        status =
+            "hold";
+
+        message =
+            `上一组已经接近次数上限。下一组先保持 ${latestSet.weight} kg，争取完成 ${maxReps} 次。`;
+
+    }
+
+    /*
+     * 普通情况
+     */
+
+    else {
+
+        recommendedWeight =
+            latestSet.weight;
+
+        recommendedReps =
+            Math.min(
+                latestSet.reps + 1,
+                maxReps
+            );
+
+        status =
+            "hold";
+
+        message =
+            `下一组先保持 ${latestSet.weight} kg，尝试比上一组多完成 1 次。`;
+
+    }
+
+
+    return {
+
+        latestWeight:
+            latestSet.weight,
+
+        latestReps:
+            latestSet.reps,
+
+        setNumber:
+            latestSet.setIndex + 1,
+
+        recommendedWeight,
+
+        recommendedReps,
+
+        minReps,
+
+        maxReps,
+
+        increment,
+
+        status,
+
+        message
+
+    };
+
+}
+
+
+/* =========================
+   显示下一组推荐
+========================= */
+
+function renderNextSetRecommendation(
+    exerciseName
+) {
+
+    const box =
+        document.getElementById(
+            "nextSetRecommendation"
+        );
+
+
+    if (!box) {
+        return;
+    }
+
+
+    if (!exerciseName) {
+
+        box.innerHTML = "";
+
+        return;
+
+    }
+
+
+    const recommendation =
+        getNextSetRecommendation(
+            exerciseName
+        );
+
+
+    if (!recommendation) {
+
+        box.innerHTML = "";
+
+        return;
+
+    }
+
+
+    const statusClass =
+        recommendation.status ===
+        "increase"
+            ? "next-set-increase"
+            : "next-set-hold";
+
+
+    const statusText =
+        recommendation.status ===
+        "increase"
+            ? "🔥 建议增加重量"
+            : "📌 保持当前重量";
+
+
+    box.innerHTML = `
+
+        <div class="
+            next-set-box
+            ${statusClass}
+        ">
+
+            <div class="next-set-title">
+                📌 下一组推荐
+            </div>
+
+
+            <div class="next-set-main">
+
+                <div class="next-set-last">
+
+                    上一组：
+                    ${recommendation.latestWeight}
+                    kg ×
+                    ${recommendation.latestReps}
+                    reps
+
+                </div>
+
+
+                <div class="next-set-weight">
+
+                    ${recommendation.recommendedWeight}
+                    kg
+
+                </div>
+
+
+                <div class="next-set-reps">
+
+                    推荐：
+                    ${recommendation.recommendedReps}
+                    reps
+
+                </div>
+
+
+                <div class="next-set-status">
+
+                    ${statusText}
+
+                </div>
+
+            </div>
+
+
+            <div class="next-set-message">
+
+                💡 ${recommendation.message}
+
+                <br><br>
+
+                🎯 目标范围：
+                ${recommendation.minReps}-
+                ${recommendation.maxReps}
+                reps
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   WORKOUT RENDER
+========================= */
+
+function renderWorkout(
+    workout
+) {
+
+    const container =
+        document.getElementById(
+            workout.id +
+            "Workout"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const data =
+        getWorkoutData();
+
+    const today =
+        getToday();
+
+    const day =
+        data[today] || {};
+
+    const workoutData =
+        day[workout.id] || {};
+
+    container.innerHTML = "";
+
+
+    workout.exercises.forEach(
+        exercise => {
+
+            const savedExercise =
+                workoutData.exercises &&
+                workoutData.exercises[
+                    exercise.name
+                ]
+                    ? workoutData.exercises[
+                        exercise.name
+                    ]
+                    : {
+                        sets: []
+                    };
+
+
+            const completed =
+                savedExercise.sets
+                    ? savedExercise.sets.filter(
+                        set =>
+                            set.completed
+                    ).length
+                    : 0;
+
+
+            const percent =
+                Math.round(
+                    completed /
+                    exercise.sets *
+                    100
+                );
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "workout";
+
+
+            let setsHTML = "";
+
+
+            for (
+                let i = 0;
+                i < exercise.sets;
+                i++
+            ) {
+
+                const savedSet =
+                    savedExercise.sets
+                        ? savedExercise.sets[i]
+                        : null;
+
+
+                const weight =
+                    savedSet &&
+                    savedSet.weight !== undefined
+                        ? savedSet.weight
+                        : "";
+
+
+                const reps =
+                    savedSet &&
+                    savedSet.reps !== undefined
+                        ? savedSet.reps
+                        : "";
+
+
+                const isCompleted =
+                    savedSet &&
+                    savedSet.completed;
+
+
+                setsHTML += `
+
+                    <div class="set-row">
+
+                        <div class="set-number">
+                            Set ${i + 1}
+                        </div>
+
+                        <input
+                            type="number"
+                            step="0.5"
+                            min="0"
+                            placeholder="重量 kg"
+                            value="${weight}"
+                            ${
+                                isCompleted
+                                    ? "disabled"
+                                    : ""
+                            }
+                            oninput="
+                                saveDraftInput(
+                                    '${workout.id}',
+                                    '${exercise.name.replace(/'/g, "\\'")}',
+                                    ${i},
+                                    'weight',
+                                    this.value
+                                )
+                            "
+                        >
+
+                        <input
+                            type="number"
+                            min="0"
+                            placeholder="次数 reps"
+                            value="${reps}"
+                            ${
+                                isCompleted
+                                    ? "disabled"
+                                    : ""
+                            }
+                            oninput="
+                                saveDraftInput(
+                                    '${workout.id}',
+                                    '${exercise.name.replace(/'/g, "\\'")}',
+                                    ${i},
+                                    'reps',
+                                    this.value
+                                )
+                            "
+                        >
+
+                        <button
+                            class="
+                                complete-set
+                                ${
+                                    isCompleted
+                                        ? "completed"
+                                        : ""
+                                }
+                            "
+                            ${
+                                isCompleted
+                                    ? "disabled"
+                                    : ""
+                            }
+                            onclick="
+                                completeSet(
+                                    '${workout.id}',
+                                    '${exercise.name.replace(/'/g, "\\'")}',
+                                    ${i},
+                                    ${exercise.rest}
+                                )
+                            "
+                        >
+                            ${
+                                isCompleted
+                                    ? "✓ 完成"
+                                    : "完成"
+                            }
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            let volume = 0;
+
+
+            if (
+                savedExercise.sets
+            ) {
+
+                savedExercise.sets.forEach(
+                    set => {
+
+                        if (
+                            set.completed
+                        ) {
+
+                            volume +=
+                                Number(
+                                    set.weight
+                                ) *
+                                Number(
+                                    set.reps
+                                );
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="exercise-header">
+
+                    <img
+                        class="exercise-image"
+                        src="${exercise.image}"
+                        onerror="
+                            this.style.display='none'
+                        "
+                    >
+
+                    <div class="exercise-info">
+
+                        <h3>
+                            ${exercise.name}
+                        </h3>
+
+                        <p>
+                            ${exercise.info}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill"
+                        style="
+                            width:${percent}%;
+                        "
+                    ></div>
+
+                </div>
+
+
+                <div class="progress-text">
+
+                    ${completed}/${exercise.sets}
+                    组完成 · ${percent}%
+
+                </div>
+
+
+                ${setsHTML}
+
+
+                <div class="exercise-summary">
+
+                    📦 本动作训练量：
+                    <strong>
+                        ${volume.toFixed(1)} kg
+                    </strong>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================
+   DRAFT
+========================= */
+
+function saveDraftInput(
+    workoutId,
+    exerciseName,
+    setIndex,
+    field,
+    value
+) {
+
+    const data =
+        getWorkoutData();
+
+    const today =
+        getToday();
+
+
+    if (!data[today]) {
+        data[today] = {};
+    }
+
+
+    if (
+        !data[today][workoutId]
+    ) {
+
+        data[today][workoutId] = {
+            exercises: {}
+        };
+
+    }
+
+
+    if (
+        !data[today][workoutId]
+            .exercises[
+                exerciseName
+            ]
+    ) {
+
+        data[today][workoutId]
+            .exercises[
+                exerciseName
+            ] = {
+                sets: []
+            };
+
+    }
+
+
+    const exercise =
+        data[today][workoutId]
+            .exercises[
+                exerciseName
+            ];
+
+
+    if (
+        !exercise.sets[setIndex]
+    ) {
+
+        exercise.sets[setIndex] = {
+
+            weight: "",
+            reps: "",
+            completed: false
+
+        };
+
+    }
+
+
+    exercise.sets[
+        setIndex
+    ][field] = value;
+
+
+    saveWorkoutData(
+        data
+    );
+
+}
+
+
+/* =========================
+   COMPLETE SET
+========================= */
+
+function completeSet(
+    workoutId,
+    exerciseName,
+    setIndex,
+    rest
+) {
+
+    const data =
+        getWorkoutData();
+
+    const today =
+        getToday();
+
+
+    if (!data[today]) {
+        data[today] = {};
+    }
+
+
+    if (
+        !data[today][workoutId]
+    ) {
+
+        data[today][workoutId] = {
+            exercises: {}
+        };
+
+    }
+
+
+    if (
+        !data[today][workoutId]
+            .exercises[
+                exerciseName
+            ]
+    ) {
+
+        data[today][workoutId]
+            .exercises[
+                exerciseName
+            ] = {
+                sets: []
+            };
+
+    }
+
+
+    const exercise =
+        data[today][workoutId]
+            .exercises[
+                exerciseName
+            ];
+
+
+    if (
+        !exercise.sets[setIndex]
+    ) {
+
+        exercise.sets[setIndex] = {
+
+            weight: "",
+            reps: "",
+            completed: false
+
+        };
+
+    }
+
+
+    const set =
+        exercise.sets[
+            setIndex
+        ];
+
+
+    const weight =
+        Number(set.weight);
+
+    const reps =
+        Number(set.reps);
+
+
+    if (
+        !weight ||
+        !reps ||
+        weight <= 0 ||
+        reps <= 0
+    ) {
+
+        showToast(
+            "⚠️ 请先输入重量和次数！"
+        );
+
+        return;
+
+    }
+
+
+    const isPR =
+        checkNewPR(
+            exerciseName,
+            weight,
+            reps
+        );
+
+
+    set.completed =
+        true;
+
+
+    saveWorkoutData(
+        data
+    );
+
+
+    if (isPR) {
+
+        showToast(
+            "🏆 新 PR！"
+        );
+
+    }
+    else {
+
+        showToast(
+            "✅ 这一组完成！"
+        );
+
+    }
+
+
+    setTimer(rest);
+
+    startTimer();
+
+    renderAll();
+
+}
+
+
+/* =========================
+   CHECK PR
+========================= */
+
+function checkNewPR(
+    exerciseName,
+    weight,
+    reps
+) {
+
+    const history =
+        getExerciseHistory(
+            exerciseName
+        );
+
+
+    if (!history.length) {
+        return true;
+    }
+
+
+    const score =
+        weight * reps;
+
+
+    const oldPR =
+        history.reduce(
+            (best, current) =>
+                current.weight *
+                current.reps >
+                best.weight *
+                best.reps
+                    ? current
+                    : best
+        );
+
+
+    return score >
+        oldPR.weight *
+        oldPR.reps;
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function renderDashboard() {
+
+    const data =
+        getWorkoutData();
+
+    const dates =
+        Object.keys(data)
+            .filter(
+                date =>
+                    hasCompletedSets(
+                        data[date]
+                    )
+            );
+
+
+    let totalSets = 0;
+    let totalVolume = 0;
+
+
+    dates.forEach(
+        date => {
+
+            const day =
+                data[date];
+
+
+            Object.values(day)
+                .forEach(
+                    workout => {
+
+                        if (
+                            !workout.exercises
+                        ) {
+                            return;
+                        }
+
+
+                        Object.values(
+                            workout.exercises
+                        )
+                        .forEach(
+                            exercise => {
+
+                                if (
+                                    !exercise.sets
+                                ) {
+                                    return;
+                                }
+
+
+                                exercise.sets.forEach(
+                                    set => {
+
+                                        if (
+                                            set.completed
+                                        ) {
+
+                                            totalSets++;
+
+                                            totalVolume +=
+                                                Number(
+                                                    set.weight
+                                                ) *
+                                                Number(
+                                                    set.reps
+                                                );
+
+                                        }
+
+                                    }
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+
+    document.getElementById(
+        "dashboardStats"
+    ).innerHTML = `
+
+        <div class="stat">
+            <div class="stat-number">
+                ${dates.length}
+            </div>
+            <div class="stat-label">
+                训练天数
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${getWeekCount(data)}
+            </div>
+            <div class="stat-label">
+                本周训练
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${totalSets}
+            </div>
+            <div class="stat-label">
+                完成组数
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${totalVolume.toFixed(0)}
+            </div>
+            <div class="stat-label">
+                总训练量 kg
+            </div>
+        </div>
+
+    `;
+
+
+    const recent =
+        document.getElementById(
+            "recentWorkouts"
+        );
+
+
+    const recentDates =
+        dates
+            .slice()
+            .sort()
+            .reverse()
+            .slice(0, 5);
+
+
+    if (
+        !recentDates.length
+    ) {
+
+        recent.innerHTML = `
+
+            <h3>
+                📅 最近训练
+            </h3>
+
+            <p style="color:#777;">
+                还没有训练记录。
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    recent.innerHTML = `
+
+        <h3>
+            📅 最近训练
+        </h3>
+
+        ${recentDates.map(
+            date => `
+
+                <div class="history-item">
+
+                    <div>
+
+                        <div>
+                            ${date}
+                        </div>
+
+                        <div class="history-detail">
+                            ${getDayWorkoutNames(
+                                data[date]
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `
+        ).join("")}
+
+    `;
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function renderHistory() {
+
+    const data =
+        getWorkoutData();
+
+
+    const dates =
+        Object.keys(data)
+            .filter(
+                date =>
+                    hasCompletedSets(
+                        data[date]
+                    )
+            );
+
+
+    let totalSets = 0;
+    let totalVolume = 0;
+
+    const exerciseSet =
+        new Set();
+
+
+    dates.forEach(
+        date => {
+
+            const day =
+                data[date];
+
+
+            Object.values(day)
+                .forEach(
+                    workout => {
+
+                        if (
+                            !workout.exercises
+                        ) {
+                            return;
+                        }
+
+
+                        Object.entries(
+                            workout.exercises
+                        )
+                        .forEach(
+                            ([name, exercise]) => {
+
+                                exerciseSet.add(
+                                    name
+                                );
+
+
+                                if (
+                                    !exercise.sets
+                                ) {
+                                    return;
+                                }
+
+
+                                exercise.sets.forEach(
+                                    set => {
+
+                                        if (
+                                            set.completed
+                                        ) {
+
+                                            totalSets++;
+
+                                            totalVolume +=
+                                                Number(
+                                                    set.weight
+                                                ) *
+                                                Number(
+                                                    set.reps
+                                                );
+
+                                        }
+
+                                    }
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+
+    document.getElementById(
+        "historyStats"
+    ).innerHTML = `
+
+        <div class="stat">
+            <div class="stat-number">
+                ${dates.length}
+            </div>
+            <div class="stat-label">
+                训练天数
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${totalSets}
+            </div>
+            <div class="stat-label">
+                完成组数
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${exerciseSet.size}
+            </div>
+            <div class="stat-label">
+                训练动作
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number">
+                ${totalVolume.toFixed(0)}
+            </div>
+            <div class="stat-label">
+                总训练量 kg
+            </div>
+        </div>
+
+    `;
+
+
+    const select =
+        document.getElementById(
+            "exerciseSelect"
+        );
+
+
+    const current =
+        select.value;
+
+
+    select.innerHTML = `
+        <option value="">
+            选择一个动作
+        </option>
+    `;
+
+
+    Array.from(
+        exerciseSet
+    )
+    .sort()
+    .forEach(
+        name => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                name;
+
+            option.textContent =
+                name;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (
+        exerciseSet.has(current)
+    ) {
+
+        select.value =
+            current;
+
+    }
+
+
+    renderHistoryList(
+        data,
+        dates
+    );
+
+
+    renderChart();
+
+}
+
+
+/* =========================
+   ACTION PROGRESS
+========================= */
+
+function renderChart() {
+
+    const select =
+        document.getElementById(
+            "exerciseSelect"
+        );
+
+
+    const exerciseName =
+        select.value;
+
+
+    const empty =
+        document.getElementById(
+            "progressEmpty"
+        );
+
+
+    const content =
+        document.getElementById(
+            "progressContent"
+        );
+
+
+    const canvas =
+        document.getElementById(
+            "progressChart"
+        );
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    if (!exerciseName) {
+
+        empty.style.display =
+            "block";
+
+        empty.innerHTML =
+            "👇 请选择一个动作";
+
+        content.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const rawHistory =
+        getExerciseHistory(
+            exerciseName
+        );
+
+
+    if (!rawHistory.length) {
+
+        empty.style.display =
+            "block";
+
+        content.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    empty.style.display =
+        "none";
+
+    content.style.display =
+        "block";
+
+    canvas.style.display =
+        "block";
+
+
+    const daily = {};
+
+
+    rawHistory.forEach(
+        item => {
+
+            if (!daily[item.date]) {
+
+                daily[item.date] = {
+                    weight: item.weight,
+                    reps: item.reps,
+                    volume:
+                        item.weight *
+                        item.reps
+                };
+
+                return;
+
+            }
+
+
+            if (
+                item.weight >
+                daily[item.date].weight
+            ) {
+
+                daily[item.date] = {
+                    weight: item.weight,
+                    reps: item.reps,
+                    volume:
+                        item.weight *
+                        item.reps
+                };
+
+            }
+
+            else if (
+                item.weight ===
+                daily[item.date].weight &&
+                item.reps >
+                daily[item.date].reps
+            ) {
+
+                daily[item.date] = {
+                    weight: item.weight,
+                    reps: item.reps,
+                    volume:
+                        item.weight *
+                        item.reps
+                };
+
+            }
+
+        }
+    );
+
+
+    const history =
+        Object.keys(daily)
+            .sort()
+            .map(
+                date => ({
+                    date,
+                    weight:
+                        daily[date].weight,
+                    reps:
+                        daily[date].reps,
+                    volume:
+                        daily[date].volume
+                })
+            );
+
+
+    const bestWeight =
+        Math.max(
+            ...rawHistory.map(
+                x => x.weight
+            )
+        );
+
+
+    const bestReps =
+        Math.max(
+            ...rawHistory.map(
+                x => x.reps
+            )
+        );
+
+
+    const totalVolume =
+        rawHistory.reduce(
+            (sum, item) =>
+                sum +
+                item.weight *
+                item.reps,
+            0
+        );
+
+
+    document.getElementById(
+        "progressBestWeight"
+    ).textContent =
+        bestWeight + " kg";
+
+
+    document.getElementById(
+        "progressBestReps"
+    ).textContent =
+        bestReps;
+
+
+    document.getElementById(
+        "progressSessions"
+    ).textContent =
+        history.length;
+
+
+    document.getElementById(
+        "progressVolume"
+    ).textContent =
+        totalVolume.toFixed(0) +
+        " kg";
+
+
+    const pr =
+        getPR(
+            exerciseName
+        );
+
+
+    document.getElementById(
+        "progressPR"
+    ).innerHTML = `
+
+        <div class="progress-pr-title">
+            🏆 Personal Record
+        </div>
+
+        <div class="progress-pr-value">
+            ${pr.weight} kg × ${pr.reps}
+        </div>
+
+        <div style="
+            color:#888;
+            margin-top:5px;
+        ">
+            ${pr.date}
+        </div>
+
+    `;
+
+
+    /*
+     * PR 推荐
+     */
+
+    renderPRRecommendation(
+        exerciseName
+    );
+
+
+    /*
+     * 下一组推荐
+     */
+
+    renderNextSetRecommendation(
+        exerciseName
+    );
+
+
+    /*
+     * 图表
+     */
+
+    const width =
+        canvas.width;
+
+    const height =
+        canvas.height;
+
+    const left = 65;
+    const right = 30;
+    const top = 30;
+    const bottom = 55;
+
+    const chartWidth =
+        width -
+        left -
+        right;
+
+    const chartHeight =
+        height -
+        top -
+        bottom;
+
+
+    const weights =
+        history.map(
+            item =>
+                item.weight
+        );
+
+
+    let max =
+        Math.max(
+            ...weights
+        );
+
+    let min =
+        Math.min(
+            ...weights
+        );
+
+
+    max += 2.5;
+
+    min =
+        Math.max(
+            0,
+            min - 2.5
+        );
+
+
+    const range =
+        Math.max(
+            max - min,
+            5
+        );
+
+
+    ctx.strokeStyle =
+        "#333";
+
+    ctx.lineWidth = 1;
+
+
+    for (
+        let i = 0;
+        i <= 5;
+        i++
+    ) {
+
+        const y =
+            top +
+            chartHeight /
+            5 *
+            i;
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            left,
+            y
+        );
+
+        ctx.lineTo(
+            width - right,
+            y
+        );
+
+        ctx.stroke();
+
+
+        const value =
+            max -
+            range / 5 * i;
+
+
+        ctx.fillStyle =
+            "#888";
+
+        ctx.font =
+            "12px Arial";
+
+        ctx.fillText(
+            value.toFixed(1) +
+            "kg",
+            8,
+            y + 4
+        );
+
+    }
+
+
+    function getX(index) {
+
+        if (
+            history.length === 1
+        ) {
+
+            return (
+                left +
+                chartWidth / 2
+            );
+
+        }
+
+
+        return (
+            left +
+            chartWidth /
+            (history.length - 1) *
+            index
+        );
+
+    }
+
+
+    function getY(weight) {
+
+        return (
+            top +
+            chartHeight -
+            (
+                weight - min
+            ) /
+            range *
+            chartHeight
+        );
+
+    }
+
+
+    ctx.strokeStyle =
+        "#4caf50";
+
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+
+
+    history.forEach(
+        (item, index) => {
+
+            const x =
+                getX(index);
+
+            const y =
+                getY(item.weight);
+
+
+            if (
+                index === 0
+            ) {
+
+                ctx.moveTo(
+                    x,
+                    y
+                );
+
+            }
+            else {
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+
+    ctx.stroke();
+
+
+    history.forEach(
+        (item, index) => {
+
+            const x =
+                getX(index);
+
+            const y =
+                getY(item.weight);
+
+
+            ctx.fillStyle =
+                "#fff";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                6,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+
+            ctx.fillStyle =
+                "#fff";
+
+            ctx.font =
+                "bold 13px Arial";
+
+            ctx.textAlign =
+                "center";
+
+
+            ctx.fillText(
+                item.weight +
+                "kg",
+                x,
+                y - 13
+            );
+
+
+            ctx.fillStyle =
+                "#aaa";
+
+            ctx.font =
+                "11px Arial";
+
+
+            ctx.fillText(
+                formatChartDate(
+                    item.date
+                ),
+                x,
+                height - 25
+            );
+
+
+            ctx.fillText(
+                item.reps +
+                " reps",
+                x,
+                y + 23
+            );
+
+        }
+    );
+
+
+    ctx.textAlign =
+        "left";
+
+
+    document.getElementById(
+        "progressHistory"
+    ).innerHTML =
+        history
+            .slice()
+            .reverse()
+            .map(
+                item => `
+
+                    <div class="history-item">
+
+                        <div>
+
+                            <div>
+                                ${item.date}
+                            </div>
+
+                            <div class="history-detail">
+                                ${item.weight}
+                                kg ×
+                                ${item.reps}
+                                reps
+                            </div>
+
+                        </div>
+
+                        <div style="
+                            color:#888;
+                            text-align:right;
+                            font-size:13px;
+                        ">
+
+                            ${item.volume.toFixed(0)}
+                            kg
+
+                            <br>
+
+                            训练量
+
+                        </div>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+}
+
+
+/* =========================
+   CHART DATE
+========================= */
+
+function formatChartDate(
+    date
+) {
+
+    const parts =
+        date.split("-");
+
+
+    if (
+        parts.length !== 3
+    ) {
+        return date;
+    }
+
+
+    return (
+        parts[1] +
+        "/" +
+        parts[2]
+    );
+
+}
+
+
+/* =========================
+   HISTORY LIST
+========================= */
+
+function renderHistoryList(
+    data,
+    dates
+) {
+
+    const container =
+        document.getElementById(
+            "historyList"
+        );
+
+
+    if (!dates.length) {
+
+        container.innerHTML = `
+            <p style="color:#777;">
+                还没有训练记录。
+            </p>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        dates
+            .slice()
+            .sort()
+            .reverse()
+            .map(
+                date => `
+
+                    <div class="history-item">
+
+                        <div>
+
+                            <div>
+                                ${date}
+                            </div>
+
+                            <div class="history-detail">
+                                ${getDayWorkoutNames(
+                                    data[date]
+                                )}
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="delete-history"
+                            onclick="
+                                deleteHistory('${date}')
+                            "
+                        >
+                            删除
+                        </button>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+}
+
+
+/* =========================
+   DAY WORKOUT
+========================= */
+
+function getDayWorkoutNames(
+    day
+) {
+
+    return Object.keys(day)
+        .map(
+            id => {
+
+                const workout =
+                    workouts.find(
+                        x =>
+                            x.id === id
+                    );
+
+                return workout
+                    ? workout.title
+                    : id;
+
+            }
+        )
+        .join(" · ");
+
+}
+
+
+/* =========================
+   COMPLETED
+========================= */
+
+function hasCompletedSets(
+    day
+) {
+
+    if (!day) {
+        return false;
+    }
+
+
+    return Object.values(day)
+        .some(
+            workout => {
+
+                if (
+                    !workout.exercises
+                ) {
+                    return false;
+                }
+
+
+                return Object.values(
+                    workout.exercises
+                )
+                .some(
+                    exercise =>
+                        exercise.sets &&
+                        exercise.sets.some(
+                            set =>
+                                set.completed
+                        )
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================
+   WEEK
+========================= */
+
+function getWeekCount(
+    data
+) {
+
+    const now =
+        new Date();
+
+    const day =
+        now.getDay();
+
+    const diff =
+        day === 0
+            ? 6
+            : day - 1;
+
+    const monday =
+        new Date(now);
+
+    monday.setDate(
+        now.getDate() -
+        diff
+    );
+
+    monday.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    let count = 0;
+
+
+    Object.keys(data)
+        .forEach(
+            date => {
+
+                if (
+                    !hasCompletedSets(
+                        data[date]
+                    )
+                ) {
+                    return;
+                }
+
+
+                const d =
+                    new Date(
+                        date +
+                        "T00:00:00"
+                    );
+
+
+                if (
+                    d >= monday &&
+                    d <= now
+                ) {
+
+                    count++;
+
+                }
+
+            }
+        );
+
+
+    return count;
+
+}
+
+
+/* =========================
+   DELETE HISTORY
+========================= */
+
+function deleteHistory(
+    date
+) {
+
+    if (
+        !confirm(
+            `确定要删除 ${date} 的训练记录吗？`
+        )
+    ) {
+        return;
+    }
+
+
+    const data =
+        getWorkoutData();
+
+
+    delete data[date];
+
+
+    saveWorkoutData(
+        data
+    );
+
+
+    renderAll();
+
+
+    showToast(
+        "🗑️ 训练记录已删除"
+    );
+
+}
+
+
+/* =========================
+   CLEAR TODAY
+========================= */
+
+function clearTodayWorkout() {
+
+    const today =
+        getToday();
+
+    const data =
+        getWorkoutData();
+
+
+    if (
+        !data[today]
+    ) {
+
+        showToast(
+            "今天还没有训练记录！"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "确定要清除今天所有训练记录吗？\n\n这个操作无法恢复。"
+        )
+    ) {
+        return;
+    }
+
+
+    delete data[today];
+
+
+    saveWorkoutData(
+        data
+    );
+
+
+    renderAll();
+
+
+    showToast(
+        "🗑️ 今日训练已清除！"
+    );
+
+}
+
+
+/* =========================
+   EXPORT
+========================= */
+
+function exportData() {
+
+    const data =
+        getWorkoutData();
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const a =
+        document.createElement(
+            "a"
+        );
+
+
+    a.href =
+        url;
+
+
+    a.download =
+        "gym-backup-" +
+        getToday() +
+        ".json";
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    showToast(
+        "📥 数据导出成功！"
+    );
+
+}
+
+
+/* =========================
+   IMPORT
+========================= */
+
+function importData(
+    event
+) {
+
+    const file =
+        event.target.files[0];
+
+
+    if (!file) {
+        return;
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(e) {
+
+            try {
+
+                const data =
+                    JSON.parse(
+                        e.target.result
+                    );
+
+
+                if (
+                    typeof data !==
+                    "object"
+                ) {
+
+                    throw new Error();
+
+                }
+
+
+                saveWorkoutData(
+                    data
+                );
+
+
+                renderAll();
+
+
+                showToast(
+                    "📤 数据导入成功！"
+                );
+
+            }
+            catch {
+
+                showToast(
+                    "❌ 数据文件无效！"
+                );
+
+            }
+
+        };
+
+
+    reader.readAsText(
+        file
+    );
+
+
+    event.target.value = "";
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+let timerSeconds = 90;
+
+let timerInterval = null;
+
+
+function updateTimerDisplay() {
+
+    const minutes =
+        Math.floor(
+            timerSeconds / 60
+        );
+
+    const seconds =
+        timerSeconds % 60;
+
+
+    document.getElementById(
+        "timerDisplay"
+    ).innerText =
+        `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+}
+
+
+function setTimer(seconds) {
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval = null;
+
+    timerSeconds =
+        seconds;
+
+    updateTimerDisplay();
+
+}
+
+
+function startTimer() {
+
+    if (timerInterval) {
+        return;
+    }
+
+
+    timerInterval =
+        setInterval(
+            () => {
+
+                if (
+                    timerSeconds <= 0
+                ) {
+
+                    clearInterval(
+                        timerInterval
+                    );
+
+                    timerInterval =
+                        null;
+
+                    showToast(
+                        "🔔 休息结束！"
+                    );
+
+                    return;
+
+                }
+
+                timerSeconds--;
+
+                updateTimerDisplay();
+
+            },
+            1000
+        );
+
+}
+
+
+function pauseTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval = null;
+
+}
+
+
+function resetTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval = null;
+
+    timerSeconds = 90;
+
+    updateTimerDisplay();
+
+}
+
+
+function toggleTimerSize(
+    event
+) {
+
+    if (event) {
+        event.stopPropagation();
+    }
+
+
+    const timer =
+        document.getElementById(
+            "timerBox"
+        );
+
+    const button =
+        document.getElementById(
+            "timerSizeButton"
+        );
+
+
+    timer.classList.toggle(
+        "minimized"
+    );
+
+
+    button.innerText =
+        timer.classList.contains(
+            "minimized"
+        )
+            ? "+"
+            : "−";
+
+}
+
+
+/* =========================
+   TIMER DRAG
+========================= */
+
+(function(){
+
+    const timer =
+        document.getElementById(
+            "timerBox"
+        );
+
+    const header =
+        document.getElementById(
+            "timerHeader"
+        );
+
+
+    let dragging = false;
+
+    let offsetX = 0;
+
+    let offsetY = 0;
+
+
+    function startDrag(
+        x,
+        y
+    ) {
+
+        const rect =
+            timer.getBoundingClientRect();
+
+
+        dragging = true;
+
+
+        offsetX =
+            x -
+            rect.left;
+
+
+        offsetY =
+            y -
+            rect.top;
+
+
+        timer.style.right =
+            "auto";
+
+        timer.style.bottom =
+            "auto";
+
+        timer.style.left =
+            rect.left +
+            "px";
+
+        timer.style.top =
+            rect.top +
+            "px";
+
+    }
+
+
+    function moveDrag(
+        x,
+        y
+    ) {
+
+        if (!dragging) {
+            return;
+        }
+
+
+        let left =
+            x -
+            offsetX;
+
+        let top =
+            y -
+            offsetY;
+
+
+        left =
+            Math.max(
+                0,
+                Math.min(
+                    left,
+                    window.innerWidth -
+                    timer.offsetWidth
+                )
+            );
+
+
+        top =
+            Math.max(
+                0,
+                Math.min(
+                    top,
+                    window.innerHeight -
+                    timer.offsetHeight
+                )
+            );
+
+
+        timer.style.left =
+            left +
+            "px";
+
+        timer.style.top =
+            top +
+            "px";
+
+    }
+
+
+    header.addEventListener(
+        "mousedown",
+        e => {
+
+            if (
+                e.target.tagName ===
+                "BUTTON"
+            ) {
+                return;
+            }
+
+
+            startDrag(
+                e.clientX,
+                e.clientY
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "mousemove",
+        e => {
+
+            moveDrag(
+                e.clientX,
+                e.clientY
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "mouseup",
+        () => {
+            dragging = false;
+        }
+    );
+
+
+    header.addEventListener(
+        "touchstart",
+        e => {
+
+            if (
+                e.target.tagName ===
+                "BUTTON"
+            ) {
+                return;
+            }
+
+
+            const touch =
+                e.touches[0];
+
+
+            startDrag(
+                touch.clientX,
+                touch.clientY
+            );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    document.addEventListener(
+        "touchmove",
+        e => {
+
+            if (!dragging) {
+                return;
+            }
+
+
+            const touch =
+                e.touches[0];
+
+
+            if (!touch) {
+                return;
+            }
+
+
+            moveDrag(
+                touch.clientX,
+                touch.clientY
+            );
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    document.addEventListener(
+        "touchend",
+        () => {
+            dragging = false;
+        }
+    );
+
+})();
+
+
+/* =========================
+   RENDER ALL
+========================= */
+
+function renderAll() {
+
+    workouts.forEach(
+        workout =>
+            renderWorkout(
+                workout
+            )
+    );
+
+    renderDashboard();
+
+    renderHistory();
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+updateTimerDisplay();
+
+renderAll();
+
+</script>
 
 </body>
 </html>
