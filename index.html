@@ -176,51 +176,102 @@
             cursor: pointer;
         }
 
-        /* ================= TIMER ================= */
+        /* =================================================
+           FLOATING REST TIMER
+        ================================================= */
 
         .timer {
-            background: #222;
-            margin: 30px auto;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
+            position: fixed;
 
-            position: sticky;
-            bottom: 10px;
-            z-index: 50;
+            right: 20px;
+            bottom: 20px;
+
+            z-index: 1000;
+
+            background: #222;
+
+            padding: 10px 12px;
+
+            border-radius: 12px;
+
+            width: 130px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.5);
+
+            text-align: center;
+        }
+
+        .timer h2 {
+            font-size: 13px;
+
+            margin: 0 0 6px 0;
+
+            color: #ccc;
         }
 
         .timer select {
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 5px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            background: #333;
+
+            color: white;
+
+            border: none;
+
+            width: 100%;
         }
 
         #timer {
-            font-size: 55px;
+            font-size: 28px;
+
             font-weight: bold;
-            margin: 20px;
+
+            margin: 7px 0;
         }
 
         .timer button {
-            padding: 11px 18px;
-            margin: 5px;
+            padding: 5px 6px;
+
+            margin: 2px;
+
             border: none;
-            border-radius: 8px;
+
+            border-radius: 6px;
+
             cursor: pointer;
-            font-size: 15px;
+
+            font-size: 11px;
+
+            background: #444;
+
+            color: white;
+        }
+
+        .timer button:hover {
+            background: #666;
         }
 
         #finishedMessage {
             display: none;
+
             background: #444;
-            padding: 15px;
-            margin: 15px auto;
-            border-radius: 10px;
-            font-size: 20px;
+
+            padding: 6px;
+
+            margin: 6px auto;
+
+            border-radius: 7px;
+
+            font-size: 11px;
+
             font-weight: bold;
-            max-width: 400px;
+
+            max-width: 120px;
         }
 
         /* ================= MOBILE ================= */
@@ -307,19 +358,47 @@
                 padding: 10px 12px;
             }
 
+            /* =================
+               MOBILE FLOATING TIMER
+            ================= */
+
             .timer {
-                width: 100%;
-                padding: 15px;
-                bottom: 5px;
+                right: 10px;
+                bottom: 10px;
+
+                width: 105px;
+
+                padding: 8px;
+
+                border-radius: 10px;
+            }
+
+            .timer h2 {
+                font-size: 11px;
+                margin-bottom: 4px;
+            }
+
+            .timer select {
+                font-size: 10px;
+                padding: 4px;
             }
 
             #timer {
-                font-size: 48px;
-                margin: 15px;
+                font-size: 23px;
+                margin: 5px 0;
             }
 
             .timer button {
-                padding: 12px 15px;
+                padding: 5px;
+
+                font-size: 10px;
+
+                margin: 1px;
+            }
+
+            #finishedMessage {
+                font-size: 9px;
+                padding: 5px;
             }
         }
 
@@ -369,7 +448,7 @@
 
 
 <!-- ================================================= -->
-<!-- ================= REST TIMER ==================== -->
+<!-- ================= FLOATING REST TIMER =========== -->
 <!-- ================================================= -->
 
 <div class="timer">
@@ -598,6 +677,7 @@ function getToday() {
         String(today.getMonth() + 1).padStart(2, "0") +
         "-" +
         String(today.getDate()).padStart(2, "0");
+
 }
 
 
