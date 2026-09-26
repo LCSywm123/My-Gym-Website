@@ -3,23 +3,63 @@
 <head>
     <title>My Gym Plan</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #111;
             color: white;
             text-align: center;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
 
         h1 {
             font-size: 40px;
+            margin-bottom: 5px;
         }
 
         h2 {
             margin-top: 10px;
         }
+
+        .date {
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        /* ================= TOP BUTTONS ================= */
+
+        .top-buttons {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #111;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .top-buttons button {
+            padding: 10px 16px;
+            margin: 4px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .clear-button {
+            background: #8b2222;
+            color: white;
+        }
+
+        /* ================= WORKOUT ================= */
 
         .workout {
             background: #222;
@@ -31,11 +71,12 @@
         }
 
         .exercise {
-            margin-bottom: 45px;
+            margin-bottom: 50px;
         }
 
         .exercise h3 {
             font-size: 24px;
+            margin-bottom: 8px;
         }
 
         .exercise-info {
@@ -80,12 +121,12 @@
         }
 
         .set-row input {
-            width: 70px;
-            padding: 9px;
+            width: 75px;
+            padding: 10px;
             border: none;
-            border-radius: 6px;
+            border-radius: 7px;
             text-align: center;
-            font-size: 15px;
+            font-size: 16px;
             background: white;
             color: black;
         }
@@ -95,15 +136,13 @@
         }
 
         .complete-button {
-            padding: 8px 13px;
+            padding: 10px 14px;
             border: none;
             border-radius: 7px;
             cursor: pointer;
             font-size: 14px;
-        }
-
-        .complete-button:hover {
-            opacity: 0.8;
+            background: #eee;
+            color: black;
         }
 
         .set-row.completed .complete-button {
@@ -130,7 +169,7 @@
         }
 
         .rest-button {
-            padding: 9px 15px;
+            padding: 10px 16px;
             font-size: 14px;
             border: none;
             border-radius: 8px;
@@ -146,6 +185,10 @@
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
+
+            position: sticky;
+            bottom: 10px;
+            z-index: 50;
         }
 
         .timer select {
@@ -161,7 +204,7 @@
         }
 
         .timer button {
-            padding: 10px 18px;
+            padding: 11px 18px;
             margin: 5px;
             border: none;
             border-radius: 8px;
@@ -185,30 +228,101 @@
         @media (max-width: 600px) {
 
             body {
-                padding: 10px;
+                padding: 8px;
             }
 
             h1 {
                 font-size: 30px;
             }
 
+            h2 {
+                font-size: 22px;
+            }
+
             .workout {
-                width: 90%;
-                padding: 15px;
+                width: 100%;
+                padding: 15px 10px;
+                margin: 12px auto;
+            }
+
+            .exercise {
+                margin-bottom: 40px;
+            }
+
+            .exercise h3 {
+                font-size: 20px;
+                line-height: 1.4;
+            }
+
+            .exercise-info {
+                font-size: 15px;
+            }
+
+            .exercise img {
+                width: 260px;
             }
 
             .set-row {
-                gap: 5px;
-            }
-
-            .set-row input {
-                width: 55px;
+                display: grid;
+                grid-template-columns: 55px 1fr 30px 1fr 35px;
+                gap: 6px;
+                padding: 12px 7px;
             }
 
             .set-number {
-                width: 45px;
+                width: auto;
+                font-size: 13px;
+            }
+
+            .set-row input {
+                width: 100%;
+                min-width: 0;
+                height: 42px;
+                font-size: 16px;
+            }
+
+            .set-row span {
+                font-size: 13px;
+            }
+
+            .complete-button {
+                grid-column: 1 / -1;
+                width: 100%;
+                height: 42px;
+                font-size: 15px;
+            }
+
+            .rest-button {
+                width: 100%;
+                height: 45px;
+                font-size: 15px;
+            }
+
+            .top-buttons {
+                padding: 5px 0;
+            }
+
+            .top-buttons button {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+
+            .timer {
+                width: 100%;
+                padding: 15px;
+                bottom: 5px;
+            }
+
+            #timer {
+                font-size: 48px;
+                margin: 15px;
+            }
+
+            .timer button {
+                padding: 12px 15px;
             }
         }
+
     </style>
 </head>
 
@@ -219,950 +333,39 @@
 
 <p>My Personal Workout Website</p>
 
+<div class="date">
+    📅 Today: <span id="todayDate"></span>
+</div>
 
-<!-- ================================================= -->
-<!-- ===================== PUSH ====================== -->
-<!-- ================================================= -->
 
-<div class="workout">
+<!-- ================= TOP BUTTONS ================= -->
 
-    <h2>🔴 PUSH DAY 推日</h2>
+<div class="top-buttons">
 
+    <button onclick="scrollToSection('push')">
+        🔴 PUSH
+    </button>
 
-    <!-- BENCH PRESS -->
+    <button onclick="scrollToSection('pull')">
+        🔵 PULL
+    </button>
 
-    <div class="exercise">
+    <button onclick="scrollToSection('legs')">
+        🟢 LEGS
+    </button>
 
-        <h3>Bench Press 平板卧推</h3>
-
-        <p class="exercise-info">4 × 6-10</p>
-
-        <img src="images/bench.jpg" alt="Bench Press">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 4</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 4 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：180 秒</p>
-            <button class="rest-button" onclick="setRest(180)">开始休息 180s</button>
-        </div>
-
-    </div>
-
-
-    <!-- INCLINE DB PRESS -->
-
-    <div class="exercise">
-
-        <h3>Incline Dumbbell Press 上斜哑铃卧推</h3>
-
-        <p class="exercise-info">3 × 8-12</p>
-
-        <img src="images/inclinedumbbellpress.jpg" alt="Incline Dumbbell Press">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：120 秒</p>
-            <button class="rest-button" onclick="setRest(120)">开始休息 120s</button>
-        </div>
-
-    </div>
-
-
-    <!-- CHEST FLY -->
-
-    <div class="exercise">
-
-        <h3>Chest Fly 夹胸</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/chestflys.jpg" alt="Chest Fly">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- LATERAL RAISE -->
-
-    <div class="exercise">
-
-        <h3>Cable Lateral Raise 绳索侧平举</h3>
-
-        <p class="exercise-info">4 × 12-20</p>
-
-        <img src="images/cablelateralraise.jpg" alt="Cable Lateral Raise">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 4</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 4 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：60 秒</p>
-            <button class="rest-button" onclick="setRest(60)">开始休息 60s</button>
-        </div>
-
-    </div>
-
-
-    <!-- SINGLE ARM TRICEPS -->
-
-    <div class="exercise">
-
-        <h3>Cable Single Arm Triceps Pushdown 单臂绳索三头下压</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/cablesinglearmtricepspushdown.jpg" alt="Triceps Pushdown">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- OVERHEAD TRICEPS -->
-
-    <div class="exercise">
-
-        <h3>Cable Overhead Triceps Extension 绳索过头三头伸展</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/cableoverheadtricepextension.jpg" alt="Overhead Triceps Extension">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
+    <button class="clear-button" onclick="clearToday()">
+        🗑️ 清除今天记录
+    </button>
 
 </div>
 
 
 <!-- ================================================= -->
-<!-- ===================== PULL ====================== -->
+<!-- ================= WORKOUTS ====================== -->
 <!-- ================================================= -->
 
-<div class="workout">
-
-    <h2>🔵 PULL DAY 拉日</h2>
-
-
-    <!-- LAT PULLDOWN -->
-
-    <div class="exercise">
-
-        <h3>Lat Pulldown 高位下拉</h3>
-
-        <p class="exercise-info">4 × 6-10</p>
-
-        <img src="images/latpulldown.jpg" alt="Lat Pulldown">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 4</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 4 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：120 秒</p>
-            <button class="rest-button" onclick="setRest(120)">开始休息 120s</button>
-        </div>
-
-    </div>
-
-
-    <!-- SEATED ROW -->
-
-    <div class="exercise">
-
-        <h3>Seated Cable Row 坐姿绳索划船</h3>
-
-        <p class="exercise-info">3 × 8-12</p>
-
-        <img src="images/seatedcablerow.jpg" alt="Seated Cable Row">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>重量</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：120 秒</p>
-            <button class="rest-button" onclick="setRest(120)">开始休息 120s</button>
-        </div>
-
-    </div>
-
-
-    <!-- SINGLE ARM ROW -->
-
-    <div class="exercise">
-
-        <h3>Single-Arm Chest-Supported Row 单手靠胸划船</h3>
-
-        <p class="exercise-info">3 × 8-12</p>
-
-        <img src="images/onearmseatedmachinerow.jpg" alt="Single Arm Row">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：120 秒</p>
-            <button class="rest-button" onclick="setRest(120)">开始休息 120s</button>
-        </div>
-
-    </div>
-
-
-    <!-- FACE PULL -->
-
-    <div class="exercise">
-
-        <h3>Face Pull 绳索面拉</h3>
-
-        <p class="exercise-info">3 × 12-20</p>
-
-        <img src="images/facepull.jpg" alt="Face Pull">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- PREACHER CURL -->
-
-    <div class="exercise">
-
-        <h3>EZ-Bar Preacher Curl 牧师凳弯举</h3>
-
-        <p class="exercise-info">3 × 8-12</p>
-
-        <img src="images/ezbarbellpreachercurl.jpg" alt="Preacher Curl">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- HAMMER CURL -->
-
-    <div class="exercise">
-
-        <h3>Rope Hammer Curl 绳索锤式弯举</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/ropehammercurl.jpg" alt="Hammer Curl">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================================================= -->
-<!-- ===================== LEGS ====================== -->
-<!-- ================================================= -->
-
-<div class="workout">
-
-    <h2>🟢 LEG DAY 腿日</h2>
-
-
-    <!-- SQUAT -->
-
-    <div class="exercise">
-
-        <h3>Barbell Squat 杠铃深蹲</h3>
-
-        <p class="exercise-info">4 × 6-10</p>
-
-        <img src="images/barbellsquart.jpg" alt="Barbell Squat">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 4</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 4 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：180 秒</p>
-            <button class="rest-button" onclick="setRest(180)">开始休息 180s</button>
-        </div>
-
-    </div>
-
-
-    <!-- LEG PRESS -->
-
-    <div class="exercise">
-
-        <h3>Leg Press 腿举</h3>
-
-        <p class="exercise-info">3 × 8-12</p>
-
-        <img src="images/legpress.jpg" alt="Leg Press">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：150 秒</p>
-            <button class="rest-button" onclick="setRest(150)">开始休息 150s</button>
-        </div>
-
-    </div>
-
-
-    <!-- LEG CURL -->
-
-    <div class="exercise">
-
-        <h3>Leg Curl 仰卧腿弯举</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/legcurl.jpg" alt="Leg Curl">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- LEG EXTENSION -->
-
-    <div class="exercise">
-
-        <h3>Leg Extension 器械腿屈伸</h3>
-
-        <p class="exercise-info">3 × 10-15</p>
-
-        <img src="images/legextension.jpg" alt="Leg Extension">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 3 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-
-    <!-- CALF RAISE -->
-
-    <div class="exercise">
-
-        <h3>Calf Raise 小腿提踵</h3>
-
-        <p class="exercise-info">4 × 12-20</p>
-
-        <img src="images/calfraise.jpg" alt="Calf Raise">
-
-        <div class="sets">
-
-            <div class="set-row">
-                <span class="set-number">Set 1</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 2</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 3</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-            <div class="set-row">
-                <span class="set-number">Set 4</span>
-                <input type="number" step="0.5" placeholder="重量">
-                <span>kg</span>
-                <input type="number" placeholder="Reps">
-                <span>reps</span>
-                <button class="complete-button" onclick="completeSet(this)">⬜ 完成</button>
-            </div>
-
-        </div>
-
-        <p class="set-progress">Progress: <span>0 / 4 Sets</span></p>
-
-        <div class="exercise-rest">
-            <p>⏱️ 推荐休息：90 秒</p>
-            <button class="rest-button" onclick="setRest(90)">开始休息 90s</button>
-        </div>
-
-    </div>
-
-</div>
+<div id="workouts"></div>
 
 
 <!-- ================================================= -->
@@ -1183,16 +386,13 @@
 
     </select>
 
-
     <div id="timer">
         3:00
     </div>
 
-
     <div id="finishedMessage">
         ⏰ 休息结束！开始下一组！
     </div>
-
 
     <button onclick="startTimer()">
         ▶️ Start
@@ -1211,230 +411,849 @@
 
 <script>
 
-    /* =================================================
-       SET COMPLETION
-    ================================================= */
+/* =================================================
+   WORKOUT DATA
+================================================= */
 
-    function completeSet(button) {
+const workouts = [
 
-        const row = button.parentElement;
+    {
+        id: "push",
+        title: "🔴 PUSH DAY 推日",
+        exercises: [
 
-        if (row.classList.contains("completed")) {
+            {
+                name: "Bench Press 平板卧推",
+                info: "4 × 6-10",
+                image: "bench.jpg",
+                sets: 4,
+                rest: 180
+            },
 
-            row.classList.remove("completed");
+            {
+                name: "Incline Dumbbell Press 上斜哑铃卧推",
+                info: "3 × 8-12",
+                image: "inclinedumbbellpress.jpg",
+                sets: 3,
+                rest: 120
+            },
 
-            button.textContent = "⬜ 完成";
+            {
+                name: "Chest Fly 夹胸",
+                info: "3 × 10-15",
+                image: "chestflys.jpg",
+                sets: 3,
+                rest: 90
+            },
 
-        } else {
+            {
+                name: "Cable Lateral Raise 绳索侧平举",
+                info: "4 × 12-20",
+                image: "cablelateralraise.jpg",
+                sets: 4,
+                rest: 60
+            },
 
-            row.classList.add("completed");
+            {
+                name: "Cable Single Arm Triceps Pushdown 单臂绳索三头下压",
+                info: "3 × 10-15",
+                image: "cablesinglearmtricepspushdown.jpg",
+                sets: 3,
+                rest: 90
+            },
 
-            button.textContent = "✅ 完成";
-        }
-
-
-        const exercise = row.closest(".exercise");
-
-        const sets = exercise.querySelectorAll(".set-row");
-
-        let completed = 0;
-
-
-        sets.forEach(function(set) {
-
-            if (set.classList.contains("completed")) {
-
-                completed++;
-
+            {
+                name: "Cable Overhead Triceps Extension 绳索过头三头伸展",
+                info: "3 × 10-15",
+                image: "cableoverheadtricepextension.jpg",
+                sets: 3,
+                rest: 90
             }
 
-        });
+        ]
+    },
 
 
-        const progress =
-            exercise.querySelector(".set-progress span");
+    {
+        id: "pull",
+        title: "🔵 PULL DAY 拉日",
+        exercises: [
+
+            {
+                name: "Lat Pulldown 高位下拉",
+                info: "4 × 6-10",
+                image: "latpulldown.jpg",
+                sets: 4,
+                rest: 120
+            },
+
+            {
+                name: "Seated Cable Row 坐姿绳索划船",
+                info: "3 × 8-12",
+                image: "seatedcablerow.jpg",
+                sets: 3,
+                rest: 120
+            },
+
+            {
+                name: "Single-Arm Chest-Supported Row 单手靠胸划船",
+                info: "3 × 8-12",
+                image: "onearmseatedmachinerow.jpg",
+                sets: 3,
+                rest: 120
+            },
+
+            {
+                name: "Face Pull 绳索面拉",
+                info: "3 × 12-20",
+                image: "facepull.jpg",
+                sets: 3,
+                rest: 90
+            },
+
+            {
+                name: "EZ-Bar Preacher Curl 牧师凳弯举",
+                info: "3 × 8-12",
+                image: "ezbarbellpreachercurl.jpg",
+                sets: 3,
+                rest: 90
+            },
+
+            {
+                name: "Rope Hammer Curl 绳索锤式弯举",
+                info: "3 × 10-15",
+                image: "ropehammercurl.jpg",
+                sets: 3,
+                rest: 90
+            }
+
+        ]
+    },
 
 
-        progress.textContent =
-            completed + " / " + sets.length + " Sets";
+    {
+        id: "legs",
+        title: "🟢 LEG DAY 腿日",
+        exercises: [
+
+            {
+                name: "Barbell Squat 杠铃深蹲",
+                info: "4 × 6-10",
+                image: "barbellsquart.jpg",
+                sets: 4,
+                rest: 180
+            },
+
+            {
+                name: "Leg Press 腿举",
+                info: "3 × 8-12",
+                image: "legpress.jpg",
+                sets: 3,
+                rest: 150
+            },
+
+            {
+                name: "Leg Curl 仰卧腿弯举",
+                info: "3 × 10-15",
+                image: "legcurl.jpg",
+                sets: 3,
+                rest: 90
+            },
+
+            {
+                name: "Leg Extension 器械腿屈伸",
+                info: "3 × 10-15",
+                image: "legextension.jpg",
+                sets: 3,
+                rest: 90
+            },
+
+            {
+                name: "Calf Raise 小腿提踵",
+                info: "4 × 12-20",
+                image: "calfraise.jpg",
+                sets: 4,
+                rest: 90
+            }
+
+        ]
     }
 
+];
 
 
-    /* =================================================
-       REST TIMER
-    ================================================= */
+/* =================================================
+   STORAGE
+================================================= */
 
-    let time = 180;
-
-    let timerInterval = null;
+const STORAGE_KEY = "myGymWorkoutData";
 
 
-    const bell =
-        new Audio("images/bell.mp3");
+function getToday() {
+
+    const today = new Date();
+
+    return today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0");
+}
 
 
-    const timerDisplay =
-        document.getElementById("timer");
+const today = getToday();
 
 
-    const restTime =
-        document.getElementById("restTime");
+document.getElementById("todayDate").textContent = today;
 
 
-    const finishedMessage =
-        document.getElementById("finishedMessage");
+function loadData() {
 
+    const saved =
+        localStorage.getItem(STORAGE_KEY);
 
-
-    function updateTimer() {
-
-        const minutes =
-            Math.floor(time / 60);
-
-        const seconds =
-            time % 60;
-
-
-        timerDisplay.textContent =
-            minutes + ":" +
-            seconds.toString().padStart(2, "0");
+    if (!saved) {
+        return {};
     }
 
+    try {
 
+        return JSON.parse(saved);
 
-    function setRest(seconds) {
+    } catch {
 
-        clearInterval(timerInterval);
+        return {};
 
-        timerInterval = null;
-
-        time = seconds;
-
-        restTime.value = seconds;
-
-        finishedMessage.style.display = "none";
-
-        updateTimer();
     }
 
+}
 
 
-    function startTimer() {
+function saveData(data) {
 
-        if (timerInterval !== null) {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
 
-            return;
-        }
-
-
-        if (time <= 0) {
-
-            time =
-                Number(restTime.value);
-
-            updateTimer();
-        }
+}
 
 
-        timerInterval =
-            setInterval(function() {
+/* =================================================
+   CREATE WORKOUT
+================================================= */
 
-                if (time > 0) {
+function createWorkouts() {
 
-                    time--;
+    const container =
+        document.getElementById("workouts");
 
-                    updateTimer();
+    container.innerHTML = "";
 
-                } else {
-
-                    clearInterval(timerInterval);
-
-                    timerInterval = null;
+    const savedData = loadData();
 
 
-                    /* 🔔 PLAY BELL */
+    workouts.forEach(function(day) {
 
-                    bell.currentTime = 0;
+        const workout =
+            document.createElement("div");
 
-                    bell.play().catch(function(error) {
+        workout.className = "workout";
 
-                        console.log(
-                            "铃声播放失败:",
-                            error
+        workout.id = day.id;
+
+
+        const title =
+            document.createElement("h2");
+
+        title.textContent = day.title;
+
+        workout.appendChild(title);
+
+
+        day.exercises.forEach(function(exercise, exerciseIndex) {
+
+            const exerciseDiv =
+                document.createElement("div");
+
+            exerciseDiv.className = "exercise";
+
+
+            const exerciseId =
+                day.id + "-" + exerciseIndex;
+
+
+            exerciseDiv.dataset.exercise =
+                exerciseId;
+
+
+            exerciseDiv.innerHTML = `
+
+                <h3>${exercise.name}</h3>
+
+                <p class="exercise-info">
+                    ${exercise.info}
+                </p>
+
+                <img
+                    src="images/${exercise.image}"
+                    alt="${exercise.name}"
+                >
+
+                <div class="sets"></div>
+
+                <p class="set-progress">
+                    Progress:
+                    <span>0 / ${exercise.sets} Sets</span>
+                </p>
+
+                <div class="exercise-rest">
+
+                    <p>
+                        ⏱️ 推荐休息：
+                        ${exercise.rest} 秒
+                    </p>
+
+                    <button
+                        class="rest-button"
+                        onclick="setRest(${exercise.rest})"
+                    >
+                        开始休息 ${exercise.rest}s
+                    </button>
+
+                </div>
+            `;
+
+
+            const setsContainer =
+                exerciseDiv.querySelector(".sets");
+
+
+            for (
+                let setNumber = 1;
+                setNumber <= exercise.sets;
+                setNumber++
+            ) {
+
+                const row =
+                    document.createElement("div");
+
+                row.className = "set-row";
+
+
+                row.innerHTML = `
+
+                    <span class="set-number">
+                        Set ${setNumber}
+                    </span>
+
+                    <input
+                        type="number"
+                        step="0.5"
+                        placeholder="重量"
+                        class="weight-input"
+                    >
+
+                    <span>kg</span>
+
+                    <input
+                        type="number"
+                        placeholder="Reps"
+                        class="reps-input"
+                    >
+
+                    <span>reps</span>
+
+                    <button
+                        class="complete-button"
+                        onclick="completeSet(this)"
+                    >
+                        ⬜ 完成
+                    </button>
+
+                `;
+
+
+                setsContainer.appendChild(row);
+
+
+                /* LOAD SAVED DATA */
+
+                const saved =
+                    savedData[today] &&
+                    savedData[today][exerciseId] &&
+                    savedData[today][exerciseId][setNumber];
+
+
+                if (saved) {
+
+                    const weightInput =
+                        row.querySelector(".weight-input");
+
+                    const repsInput =
+                        row.querySelector(".reps-input");
+
+
+                    weightInput.value =
+                        saved.weight || "";
+
+
+                    repsInput.value =
+                        saved.reps || "";
+
+
+                    if (saved.completed) {
+
+                        row.classList.add("completed");
+
+                        row.querySelector(
+                            ".complete-button"
+                        ).textContent = "✅ 完成";
+
+                    }
+
+                }
+
+
+                /* AUTO SAVE INPUT */
+
+                row.querySelectorAll("input")
+                    .forEach(function(input) {
+
+                        input.addEventListener(
+                            "input",
+                            function() {
+
+                                saveCurrentSet(
+                                    row,
+                                    exerciseId,
+                                    setNumber
+                                );
+
+                            }
                         );
 
                     });
 
-
-                    /* MESSAGE */
-
-                    finishedMessage.style.display =
-                        "block";
+            }
 
 
-                    /* 5 SECONDS */
+            updateProgress(exerciseDiv);
 
-                    setTimeout(function() {
 
-                        finishedMessage.style.display =
-                            "none";
+            workout.appendChild(exerciseDiv);
 
-                    }, 5000);
+        });
 
-                }
 
-            }, 1000);
+        container.appendChild(workout);
+
+    });
+
+}
+
+
+/* =================================================
+   SAVE CURRENT SET
+================================================= */
+
+function saveCurrentSet(
+    row,
+    exerciseId,
+    setNumber
+) {
+
+    const data = loadData();
+
+
+    if (!data[today]) {
+        data[today] = {};
     }
 
 
-
-    function pauseTimer() {
-
-        clearInterval(timerInterval);
-
-        timerInterval = null;
+    if (!data[today][exerciseId]) {
+        data[today][exerciseId] = {};
     }
 
 
+    const weight =
+        row.querySelector(".weight-input").value;
 
-    function resetTimer() {
 
-        clearInterval(timerInterval);
+    const reps =
+        row.querySelector(".reps-input").value;
 
-        timerInterval = null;
+
+    const completed =
+        row.classList.contains("completed");
+
+
+    data[today][exerciseId][setNumber] = {
+
+        weight: weight,
+
+        reps: reps,
+
+        completed: completed
+
+    };
+
+
+    saveData(data);
+
+}
+
+
+/* =================================================
+   COMPLETE SET
+================================================= */
+
+function completeSet(button) {
+
+    const row =
+        button.parentElement;
+
+
+    if (
+        row.querySelector(".weight-input").value === "" ||
+        row.querySelector(".reps-input").value === ""
+    ) {
+
+        alert("请先输入重量和 Reps");
+
+        return;
+
+    }
+
+
+    if (row.classList.contains("completed")) {
+
+        row.classList.remove("completed");
+
+        button.textContent =
+            "⬜ 完成";
+
+    } else {
+
+        row.classList.add("completed");
+
+        button.textContent =
+            "✅ 完成";
+
+    }
+
+
+    const exercise =
+        row.closest(".exercise");
+
+
+    updateProgress(exercise);
+
+
+    const exerciseId =
+        exercise.dataset.exercise;
+
+
+    const sets =
+        exercise.querySelectorAll(".set-row");
+
+
+    sets.forEach(function(set, index) {
+
+        saveCurrentSet(
+            set,
+            exerciseId,
+            index + 1
+        );
+
+    });
+
+}
+
+
+/* =================================================
+   UPDATE PROGRESS
+================================================= */
+
+function updateProgress(exercise) {
+
+    const sets =
+        exercise.querySelectorAll(".set-row");
+
+
+    let completed = 0;
+
+
+    sets.forEach(function(set) {
+
+        if (
+            set.classList.contains("completed")
+        ) {
+
+            completed++;
+
+        }
+
+    });
+
+
+    const progress =
+        exercise.querySelector(
+            ".set-progress span"
+        );
+
+
+    progress.textContent =
+        completed +
+        " / " +
+        sets.length +
+        " Sets";
+
+}
+
+
+/* =================================================
+   CLEAR TODAY
+================================================= */
+
+function clearToday() {
+
+    const confirmClear =
+        confirm(
+            "确定要清除今天所有训练记录吗？"
+        );
+
+
+    if (!confirmClear) {
+        return;
+    }
+
+
+    const data = loadData();
+
+
+    delete data[today];
+
+
+    saveData(data);
+
+
+    createWorkouts();
+
+}
+
+
+/* =================================================
+   SECTION NAVIGATION
+================================================= */
+
+function scrollToSection(id) {
+
+    const section =
+        document.getElementById(id);
+
+
+    if (section) {
+
+        section.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+/* =================================================
+   REST TIMER
+================================================= */
+
+let time = 180;
+
+let timerInterval = null;
+
+
+const bell =
+    new Audio("images/bell.mp3");
+
+
+const timerDisplay =
+    document.getElementById("timer");
+
+
+const restTime =
+    document.getElementById("restTime");
+
+
+const finishedMessage =
+    document.getElementById("finishedMessage");
+
+
+function updateTimer() {
+
+    const minutes =
+        Math.floor(time / 60);
+
+
+    const seconds =
+        time % 60;
+
+
+    timerDisplay.textContent =
+        minutes +
+        ":" +
+        seconds.toString().padStart(2, "0");
+
+}
+
+
+function setRest(seconds) {
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+
+
+    time = seconds;
+
+
+    restTime.value =
+        seconds;
+
+
+    finishedMessage.style.display =
+        "none";
+
+
+    updateTimer();
+
+}
+
+
+function startTimer() {
+
+    if (timerInterval !== null) {
+        return;
+    }
+
+
+    if (time <= 0) {
 
         time =
             Number(restTime.value);
 
-        finishedMessage.style.display =
-            "none";
-
         updateTimer();
+
     }
 
 
+    timerInterval =
+        setInterval(function() {
 
-    restTime.addEventListener(
-        "change",
-        function() {
+            if (time > 0) {
 
-            clearInterval(timerInterval);
+                time--;
 
-            timerInterval = null;
+                updateTimer();
 
-            time =
-                Number(this.value);
+            } else {
 
-            finishedMessage.style.display =
-                "none";
+                clearInterval(timerInterval);
 
-            updateTimer();
-        }
-    );
+                timerInterval = null;
+
+
+                /* 🔔 BELL */
+
+                bell.currentTime = 0;
+
+                bell.play().catch(function(error) {
+
+                    console.log(
+                        "铃声播放失败:",
+                        error
+                    );
+
+                });
+
+
+                finishedMessage.style.display =
+                    "block";
+
+
+                setTimeout(function() {
+
+                    finishedMessage.style.display =
+                        "none";
+
+                }, 5000);
+
+            }
+
+        }, 1000);
+
+}
+
+
+function pauseTimer() {
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+
+}
+
+
+function resetTimer() {
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+
+
+    time =
+        Number(restTime.value);
+
+
+    finishedMessage.style.display =
+        "none";
 
 
     updateTimer();
+
+}
+
+
+restTime.addEventListener(
+    "change",
+    function() {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+
+
+        time =
+            Number(this.value);
+
+
+        finishedMessage.style.display =
+            "none";
+
+
+        updateTimer();
+
+    }
+);
+
+
+/* =================================================
+   START WEBSITE
+================================================= */
+
+createWorkouts();
+
+updateTimer();
 
 </script>
 
